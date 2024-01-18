@@ -2,8 +2,25 @@ import 'package:flutter/material.dart';
 import 'package:notesapp/controller/noteprovider.dart';
 import 'package:provider/provider.dart';
 
-class AddNotes extends StatelessWidget {
-  AddNotes({super.key});
+class AddNotes extends StatefulWidget {
+  String id;
+  String title;
+  String note;
+  AddNotes({super.key,required this.id,required this.title,required this.note});
+
+  @override
+  State<AddNotes> createState() => _AddNotesState();
+}
+
+class _AddNotesState extends State<AddNotes> {
+  @override
+  void initState() {
+    final editpro = Provider.of<NoteProvider>(context,listen: false);
+    editpro.titlecontroller=TextEditingController(text: widget.title);
+    editpro.notecontroller=TextEditingController(text: widget.note);
+    super.initState();
+  }
+  bool isEdit = false;
 
   @override
   Widget build(BuildContext context) {
@@ -11,24 +28,27 @@ class AddNotes extends StatelessWidget {
         appBar: AppBar(
             iconTheme: const IconThemeData(color: Colors.white),
             backgroundColor: Colors.black,
-            title: const Text(
-              "Add Notes",
-          style: TextStyle(color: Colors.white,fontStyle: FontStyle.italic,fontWeight: FontWeight.bold),
+            title: Text(
+              isEdit ? "Add Notes" : "Edit Note",
+              style: const TextStyle(
+                  color: Colors.white,
+                  fontStyle: FontStyle.italic,
+                  fontWeight: FontWeight.bold),
             )),
         body: Center(
             child: Card(
                 color: Colors.black26,
                 child: SizedBox(
-                    height:400,
+                    height: 400,
                     width: 400,
                     child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Padding(
                             padding: const EdgeInsets.only(right: 40, left: 40),
-                            child: Consumer<NoteProvider>(builder: (context, value, child) => 
-                               TextFormField(
-                                controller:value.titlecontroller,
+                            child: Consumer<NoteProvider>(
+                              builder: (context, value, child) => TextFormField(
+                                controller: value.titlecontroller,
                                 decoration: const InputDecoration(
                                   hintText: "Title",
                                 ),
@@ -37,8 +57,8 @@ class AddNotes extends StatelessWidget {
                           ),
                           Padding(
                             padding: const EdgeInsets.only(left: 40, right: 40),
-                            child: Consumer<NoteProvider>(builder: (context, value, child) => 
-                              TextFormField(
+                            child: Consumer<NoteProvider>(
+                              builder: (context, value, child) => TextFormField(
                                 controller: value.notecontroller,
                                 maxLines: 4,
                                 decoration: const InputDecoration(
@@ -49,10 +69,12 @@ class AddNotes extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(height: 20),
-                          Consumer<NoteProvider>(builder: (context, value, child) => 
-                             GestureDetector(
+                          Consumer<NoteProvider>(
+                            builder: (context, value, child) => GestureDetector(
                               onTap: () async {
-                                value.addNotes(context);
+                                isEdit
+                                    ? value.addNotes(context)
+                                    : value.updateNote(id:widget.id);
                                 Navigator.of(context).pop();
                               },
                               child: Container(
@@ -62,11 +84,11 @@ class AddNotes extends StatelessWidget {
                                   color: Colors.black,
                                   borderRadius: BorderRadius.circular(10),
                                 ),
-                                child:  Align(
+                                child: Align(
                                   alignment: Alignment.center,
                                   child: Text(
-                                    "Add",
-                                    style: TextStyle(
+                                    isEdit ? "Add" : "Update",
+                                    style: const TextStyle(
                                         color: Colors.white, fontSize: 20),
                                   ),
                                 ),

@@ -7,7 +7,6 @@ class NotSevice {
       'https://65a753e194c2c5762da67b46.mockapi.io/notesApp/notesApp';
 
   Future<List<NotesModel>>  getNotes() async {
-
     try {
       Response response = await Dio().get(endPointUrl);
       if (response.statusCode == 200) {

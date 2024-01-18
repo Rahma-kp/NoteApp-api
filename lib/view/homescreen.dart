@@ -38,7 +38,7 @@ class _HomeScreenState extends State<HomeScreen> {
         backgroundColor: const Color.fromARGB(255, 0, 0, 0),
         onPressed: () {
           Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => AddNotes(),
+            builder: (context) => AddNotes(id: '',note: '',title: ''),
           ));
         },
         child: const Icon(
@@ -48,14 +48,14 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       body: Center(
           child: Consumer<NoteProvider>(
-        builder: (context, value, child) => FutureBuilder(
+        builder: (context, pro, child) => FutureBuilder(
             future: NotSevice().getNotes(),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.done) {
                 return ListView.builder(
-                  itemCount: value.noteList.length,
+                  itemCount: pro.noteList.length,
                   itemBuilder: (ctx, index) {
-                    final data = value.noteList[index];
+                    final data = pro.noteList[index];
                     return Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Card(
@@ -83,21 +83,19 @@ class _HomeScreenState extends State<HomeScreen> {
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                           ),
-                          trailing: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              IconButton(
-                                onPressed: () {},
-                                icon: const Icon(Icons.edit,
-                                    color: Color.fromARGB(255, 81, 142, 83)),
-                              ),
-                              IconButton(
-                                onPressed: () {value.deletNote(id: data.id);},
-                                icon: const Icon(Icons.delete,
-                                    color: Color.fromARGB(255, 175, 62, 54)),
-                              ),
-                            ],
-                          ),
+                          trailing:PopupMenuButton( onSelected: (value) {
+                            if(value=="Edit"){
+                              Navigator.of(context).push(MaterialPageRoute(builder: (context) => AddNotes(id:data.id??'',note:data.notes??'',title: data.title??'',),));
+                            }else if(value=="Delete"){
+                              pro.deletNote(id: data.id);
+                            }
+                          },
+                          itemBuilder: (context) {
+                            return[
+                              PopupMenuItem(child: Text("Edit"),value:"Edit" ,),
+                              PopupMenuItem(child: Text("Delete"),value: "Delete",)
+                            ];
+                          },) 
                         ),
                       ),
                     );
