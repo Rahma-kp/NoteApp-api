@@ -18,16 +18,18 @@ class NoteProvider extends ChangeNotifier{
   addNotes(BuildContext context) async {
   final name = titlecontroller.text;
   final note = notecontroller.text;
-  NotSevice().addNotes(NotesModel(title: name, notes: note))
-      .then((_) {
-        fetchNote();
-        Navigator.pop(context);
-        notifyListeners();
-      })
-      .catchError((error) {
-        print('Error adding notes: $error');
-      });
+
+  try {
+    await NotSevice().addNotes(NotesModel(title: name, notes: note));
+    await fetchNote(); // Wait for the notes to be updated before navigating or notifying
+    Navigator.pop(context);
+    notifyListeners();
+  } catch (error) {
+    print('Error adding notes: $error');
+    // Handle the error appropriately (e.g., show an error message)
+  }
 }
+
 
   deletNote({required id})async{
     await NotSevice().deletNotes(id: id);

@@ -24,14 +24,15 @@ class NotSevice {
   }
 
   addNotes(NotesModel value) async {
-    try {
-         var response = await dio.post(endPointUrl, data: value.toJson());
-    return response.data; 
-
-    } catch (e) {
-      Exception(e);
-    }
+  try {
+    var response = await dio.post(endPointUrl, data: value.toJson());
+    return response.data;
+  } catch (e) {
+    print('Error adding note: $e');
+    throw Exception(e);
   }
+}
+
 
   deletNotes({required id}) async {
     var deletUrl =

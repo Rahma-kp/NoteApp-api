@@ -29,7 +29,7 @@ class _AddNotesState extends State<AddNotes> {
             iconTheme: const IconThemeData(color: Colors.white),
             backgroundColor: Colors.black,
             title: Text(
-              isEdit ? "Add Notes" : "Edit Note",
+              isEdit ? "Edit Note" :"Add Note" ,
               style: const TextStyle(
                   color: Colors.white,
                   fontStyle: FontStyle.italic,
@@ -70,31 +70,36 @@ class _AddNotesState extends State<AddNotes> {
                           ),
                           const SizedBox(height: 20),
                           Consumer<NoteProvider>(
-                            builder: (context, value, child) => GestureDetector(
-                              onTap: () async {
-                                isEdit
-                                    ? value.addNotes(context)
-                                    : value.updateNote(id:widget.id);
-                                Navigator.of(context).pop();
-                              },
-                              child: Container(
-                                height: 35,
-                                width: 70,
-                                decoration: BoxDecoration(
-                                  color: Colors.black,
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: Align(
-                                  alignment: Alignment.center,
-                                  child: Text(
-                                    isEdit ? "Add" : "Update",
-                                    style: const TextStyle(
-                                        color: Colors.white, fontSize: 20),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          )
+  builder: (context, value, child) => GestureDetector(
+    onTap: () async {
+      if (isEdit) {
+        value.updateNote(id: widget.id);
+      } else {
+        value.addNotes(context);
+      }
+      Navigator.of(context).pop();
+    },
+    child: Container(
+      height: 35,
+      width: 70,
+      decoration: BoxDecoration(
+        color: Colors.black,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Align(
+        alignment: Alignment.center,
+        child: Text(
+          isEdit ? "Update" : "Add", // Adjust the button text
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 20,
+          ),
+        ),
+      ),
+    ),
+  ),
+)
+
                         ])))));
   }
 }
